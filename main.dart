@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         title: 'Namer App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 217, 0)),
+          colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 51, 0)),
         ),
         home: MyHomePage(),
       ),
@@ -27,14 +27,11 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
-
+  var favorites = <WordPair>[];
   void getNext() {
     current = WordPair.random();
     notifyListeners();
   }
-
-  var favorites = <WordPair>[];
-
   void toggleFavorites(){
     if (favorites.contains(current)) {
       favorites.remove(current);
@@ -59,8 +56,8 @@ var selectedIndex = 0;
     Widget page;
     switch(selectedIndex){
       case 0:  page = GeneratorPage();
-      case 1:  page = Placeholder();
-      default: throw UnimplementedError('no wiget for $selectedIndex');
+      case 1:  page = FavoritesPage();
+      default: throw UnimplementedError('Sry, no wiget for $selectedIndex');
     }
     
     return Scaffold(
@@ -138,6 +135,31 @@ class GeneratorPage extends StatelessWidget {
               )
             ],
           ),);  
+  }
+}
+
+class FavoritesPage extends StatelessWidget {
+  const FavoritesPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+   
+    var appState = context.watch<MyAppState>();
+    if (appState.favorites.isEmpty) {
+      return Center(child: Text('Nothig jet.'));
+    }
+
+    return Center(
+      child: ListView(
+        children: [
+          for (var word in appState.favorites) 
+          ListTile(
+            leading: Icon(Icons.favorite),
+            title: Text(word.asPascalCase),
+          )
+        ],
+      ),
+    ) ;
   }
 }
 
